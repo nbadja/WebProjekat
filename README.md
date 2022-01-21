@@ -1,2 +1,2 @@
-# team-chat
-Web aplikacija za kreiranje posebnih chat soba, gde mozete pozvati vase prijatelje za razgovor
+# WebProjekat
+Web aplikacija za vodjenje evidencije o proizvodima u radnjama.
