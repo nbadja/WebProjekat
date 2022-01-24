@@ -187,7 +187,7 @@ function preuzmiPredmete(id)
                 var btnDiv = document.createElement("div");
                 btnDiv.classList.add("col");
                 var th = document.createElement("button");
-                th.classList.add("w-100");
+                th.classList.add("w-100", "btn", "btn-primary");
                 th.innerHTML = "Add";
                 th.onclick = function()
                 {
@@ -254,7 +254,14 @@ function deletePredmeti(prodavnicaID, predmetID)
     {method : 'DELETE'}
     )
    .then(p => {
-        preuzmiPredmete(prodavnicaID);
+        if(p.ok)
+            preuzmiPredmete(prodavnicaID);
+        else
+        {
+                var txt = p.text().then(message => {
+                    alert(message);
+                });
+        }
     });
 }
 
@@ -265,15 +272,24 @@ export function preuzmiProdavnice(div, id)
     {method : 'GET'}
     )
     .then(p => {
-        p.json().then(prodavnica => {
-            div.innerHTML = "";
-            prodavnica.forEach(prod => {
-                var p  = new Prodavnica(prod.id, prod.naziv, prod.drzava.naziv, prod.drzava.id, prod.grad.naziv, prod.adresa);
-                p.popuniTabelu(div);
-                console.log("PROD");
-            });
-            console.log(p);
-        })
+        if(p.ok)
+        {
+            p.json().then(prodavnica => {
+                div.innerHTML = "";
+                prodavnica.forEach(prod => {
+                    var p  = new Prodavnica(prod.id, prod.naziv, prod.drzava.naziv, prod.drzava.id, prod.grad.naziv, prod.adresa);
+                    p.popuniTabelu(div);
+                    console.log("PROD");
+                });
+                console.log(p);
+            })
+        }
+        else
+        {
+                var txt = p.text().then(message => {
+                    alert(message);
+                });
+        }
     })
 }
 
@@ -289,8 +305,15 @@ function deleteProdavnica(div, drzava, ID)
         {method : 'DELETE'}
         )
         .then(p => {
-                preuzmiProdavnice(div, drzava);
-            });
+                if(p.ok)
+                    preuzmiProdavnice(div, drzava);
+                else
+                {
+                            var txt = p.text().then(message => {
+                                alert(message);
+                            });
+                }
+        });
     });
     instanca = 0;
 }
@@ -304,7 +327,14 @@ export function dodajProdavnicu(div, Naziv, Drzava, Grad, Adresa)
     )
    .then(p => {
         instanca = 0;
-        preuzmiProdavnice(div, Drzava);
+        if(p.ok)
+            preuzmiProdavnice(div, Drzava);
+        else
+        {
+                    var txt = p.text().then(message => {
+                        alert(message);
+                    });
+        }
     });
 }
 
@@ -317,7 +347,14 @@ export function updateProdavnicu(ProdavnicaID, Naziv, Adresa, div, DrzavaID)
     )
    .then(p => {
         instanca = 0;
-        preuzmiProdavnice(div, DrzavaID);
+        if(p.ok)
+            preuzmiProdavnice(div, DrzavaID);
+        else
+        {
+                var txt = p.text().then(message => {
+                    alert(message);
+                });
+        }
     });
 }
 
@@ -327,7 +364,14 @@ export function dodajPredmet(ProdavnicaID)
     fetch("https://localhost:5001/Storage/DodajStoregu/" + ProdavnicaID + "/" + $(".predmetDropdown option:selected").val(),
     {method : 'POST'}
     ).then(p => {
-        preuzmiPredmete(ProdavnicaID);
+        if(p.ok)
+            preuzmiPredmete(ProdavnicaID);
+        else
+        {
+            var txt = p.text().then(message => {
+                alert(message);
+            });
+        }
     });
 }
 

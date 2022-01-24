@@ -53,11 +53,10 @@ namespace Controllers
         [HttpPost]
         public async Task<ActionResult> DodajPredmet(string Naziv, string BarCode, int Cena)
         {
-            bool isDigitIme = Naziv.Any(c => char.IsDigit(c));
-
-            if (string.IsNullOrWhiteSpace(Naziv)|| Naziv.Length < 1 || isDigitIme == true)
+            if (string.IsNullOrWhiteSpace(Naziv)|| Naziv.Length < 1 )
                 return BadRequest("Uneti naziv predmeta nije validan !");
-
+            if (Context.Predmeti.Where(p => p.BarCode == BarCode).FirstOrDefault() != null)
+                return BadRequest("Predmet sa datim barkodom vec postoji");
             try
             {
                 Predmet novaProd = new Predmet

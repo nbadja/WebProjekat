@@ -92,16 +92,26 @@ function preuzmiDrzave(dropDown)
     {method : 'GET'}
     )
     .then(p => {
-        p.json().then(drzava => {
-            dropDown.innerHTML = "";
+        if(p.ok)
+        {
+            p.json().then(drzava => {
+                dropDown.innerHTML = "";
 
-            drzava.forEach(infoDrzava => {
-                var option = document.createElement('option');
-                option.text = infoDrzava.naziv;
-                option.value = infoDrzava.id;
-                dropDown.add(option);
-            });
-        })
+                drzava.forEach(infoDrzava => {
+                    var option = document.createElement('option');
+                    option.text = infoDrzava.naziv;
+                    option.value = infoDrzava.id;
+                    dropDown.add(option);
+                });
+            })
+        }
+        else
+        {
+                var txt = p.text().then(message => {
+                    alert(message);
+                });
+        }
+
     })
 }
 
@@ -149,7 +159,7 @@ export function createDrzaveDropdown(container)
                 var option = document.createElement("option");
                 option.text = "PRAZNO";
                 $(".drzaveDropdown").get(0).add(option);
-                $(".drzaveDropdown").prop( "disabled", true );
+                $(".drzaveDropdown").prop("disabled", true );
                 dodajDrzavu.disabled = true;
             }
         }

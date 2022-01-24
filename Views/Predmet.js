@@ -191,7 +191,14 @@ export function updatePredmet(id, naziv, barcode , cena, div)
     {method : 'PUT'}
     )
    .then(p => {
-        preuzmiPredmete(div);
+        if(p.ok)
+             preuzmiPredmete(div);
+        else
+        {
+                var txt = p.text().then(message => {
+                alert(message);
+            });
+        }
     });
 }
 
@@ -203,7 +210,14 @@ export function dodajPredmet(div, naziv, barcode , cena)
     {method : 'POST'}
     )
    .then(p => {
-        preuzmiPredmete(div);
+        if(p.ok)
+            preuzmiPredmete(div);
+        else
+        {
+            var txt = p.text().then(message => {
+                alert(message);
+            });
+        }
     });
 }
 
@@ -215,6 +229,13 @@ export function deletePredmet(id, div)
     {method : 'DELETE'}
     )
    .then(p => {
-        preuzmiPredmete(div);
+        if(p.ok)
+            preuzmiPredmete(div);
+            else
+            {
+                var txt = p.text().then(message => {
+                    alert(message);
+                });
+            }
     });
 }
