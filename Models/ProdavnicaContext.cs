@@ -7,12 +7,13 @@ namespace Models
     {
         public DbSet<Predmet> Predmeti {get;set;}
 
-        public DbSet<Lokacija> Lokacije {get;set;}
+        public DbSet<Drzava> Drzave {get;set;}
+
+        public DbSet<Grad> Gradovi {get;set;}
 
         public DbSet<Prodavnica> Prodavnice {get;set;}
 
         public DbSet<Storage> Storages {get;set;}
-
 
         public ProdavnicaContext(DbContextOptions Options) : base(Options)
         {

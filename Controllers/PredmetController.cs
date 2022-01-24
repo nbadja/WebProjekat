@@ -78,25 +78,27 @@ namespace Controllers
         }
 
 
-        [Route("UpdatePredmet/{Naziv}/{BarCode}/{Cena}")]
+        [Route("UpdatePredmet/{ID}/{Naziv}/{BarCode}/{Cena}")]
         [HttpPut]
-        public async Task<ActionResult> UpdatePredmet(string Naziv, string BarCode, int Cena)
+        public async Task<ActionResult> UpdatePredmet(int ID, string Naziv, string BarCode, int Cena)
         {
             bool isDigitIme = Naziv.Any(c => char.IsDigit(c));
 
             if (string.IsNullOrWhiteSpace(Naziv)|| Naziv.Length < 1 || isDigitIme == true)
                 return BadRequest("Uneti naziv predmeta nije validan !");
+            if(Context.Predmeti.Where(p => p.ID == ID).FirstOrDefault() == null)
+                return BadRequest("Uneti predmet ne postoji!");
 
             try
             {
-                var predmet = Context.Predmeti.Where(p => p.Naziv == Naziv).FirstOrDefault();
+                var predmet = Context.Predmeti.Where(p => p.ID == ID).FirstOrDefault();
                 predmet.Naziv = Naziv;
                 predmet.BarCode = BarCode;
                 predmet.Cena = Cena;
 
                 Context.Predmeti.Update(predmet);
                 await Context.SaveChangesAsync();
-                return Ok($"Uspesno dodata nova prodavnica sa nazivom: {Naziv}");
+                return Ok($"Uspesno promenjen predmet");
             }
             catch(Exception e)
             {
@@ -105,18 +107,18 @@ namespace Controllers
         }
 
 
-        [Route("DeletePredmet/{Naziv}")]
+        [Route("DeletePredmet/{ID}")]
         [HttpDelete]
-        public async Task<IActionResult> DeletePredmet(string Naziv)
+        public async Task<IActionResult> DeletePredmet(int ID)
         {
-             if(Context.Predmeti.Where( p =>p.Naziv  == Naziv).FirstOrDefault() == null)
+             if(Context.Predmeti.Where( p =>p.ID  == ID).FirstOrDefault() == null)
                 return BadRequest("Uneti predmet nije validan !");
              try
              {
-                var Dev = Context.Predmeti.Where(p =>p.Naziv  == Naziv).FirstOrDefault();
+                var Dev = Context.Predmeti.Where(p =>p.ID == ID).FirstOrDefault();
                 Context.Predmeti.Remove(Dev);
                 await Context.SaveChangesAsync();
-                return Ok($"Delete predmeta sa nadimkom: {Naziv} je uspesan");
+                return Ok($"Delete predmeta uspesan");
              }
              catch(Exception e)
              {
@@ -148,18 +150,16 @@ namespace Controllers
 
        [Route("PreuzmiPredmet")]
        [HttpGet]
-       public async Task<ActionResult> PreuzmiProdavnice()
+       public async Task<ActionResult> PreuzmiPredmet()
        {
            try{
-               return Ok(await Context.Predmeti.Select(p => new {p.Naziv , p.BarCode, p.Cena}).ToListAsync());
+               return Ok(await Context.Predmeti.Select(p => new {p.ID, p.Naziv , p.BarCode, p.Cena}).ToListAsync());
            }
            catch(Exception e)
            {
                 return BadRequest(e.Message);
            }
        }
-
-
 
     }
 }

@@ -1,34 +1,73 @@
 
 [class^="polje"]
 {
-    border: blue solid;
+    border: 1px solid blue;
 }
 
-table
+
+.spisakProdavnica
 {
-    border-collapse: collapse;
-    width: 100%;
-    border: 1px solid #ddd;
+    border: 1px solid black;
+    border-radius: 10px;
 }
 
-th, td {
-    text-align: left;
-    height: 10%;
-    padding: 16px;
+
+.spisakPredmeta
+{
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+
+.header
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.prodavnicaRed
+{
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.prodavnicaImg
+{
+    height : 50px;
+    width : 50px;
 }
 
 .btnControls
 {
-    padding: 10px;
-    margin: 10px;
-    float:right;
+    display: none;
+    position: absolute;
+    width: 150px;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 3px 0 #ccc;
+}
+
+.btnControls input {
+    display: block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: #343434;
+}
+
+.menuBtn:hover .btnControls {
+    display: block;
 }
 
 .imgContainer
 {
     flex: 1;
     align-items: center;
-    border: 1px solid blue;
+}
+
+.mojRed
+{
+    border : 1px solid blue;
 }
 
 img

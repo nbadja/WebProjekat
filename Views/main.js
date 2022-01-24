@@ -1,13 +1,21 @@
 import {Prodavnica, preuzmiProdavnice, dodajModel} from "./Prodavnica.js"
+import {createDrzaveDropdown, ucitajPrvuDrzavu} from "./Drzava.js"
 
 var container = document.createElement("div");
-container.classList.add("container-fluid","table-responsive");
-var div = document.createElement("table");
-div.classList.add("flex", "tableContent", "table-striped");
-div.id = "mojaTabela";
-container.appendChild(div);
+container.classList.add("container","table-responsive");
+
+
+var header = document.createElement("div");
+header.classList.add("header");
+var h1 = document.createElement("h1");
+h1.classList.add("col");
+h1.innerHTML = "Cenovnik";
+header.appendChild(h1);
+container.appendChild(header);
+
+
+createDrzaveDropdown(container);
 
 document.body.appendChild(container);
 
 dodajModel();
-preuzmiProdavnice();

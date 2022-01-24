@@ -6,28 +6,19 @@ using System.Text.Json.Serialization;
 
 namespace Models
 {
-    [Table("Prodavnica")]
-    public class Prodavnica
+    [Table("Grad")]
+    public class Grad
     {
         [Key]
+        [Column("ID")]
         [DataType("integer")]
         public int ID {get;set;}
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string Naziv { get; set; }
 
         [Required]
         public Drzava Drzava {get;set;}
-
-        [Required]
-        public Grad Grad {get;set;}
-
-        [Required]
-        public string Adresa {get;set;}
-
-        [JsonIgnore]
-        [ForeignKey("ProdavnicaID")]
-        public List<Storage> Storages {get;set;}
     }
 }

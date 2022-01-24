@@ -6,8 +6,8 @@ using System.Text.Json.Serialization;
 
 namespace Models
 {
-    [Table("Lokacija")]
-    public class Lokacija
+    [Table("Drzava")]
+    public class Drzava
     {
         [Key]
         [Column("ID")]
@@ -16,12 +16,6 @@ namespace Models
 
         [Required]
         [MaxLength(100)]
-        [Column("Mesto")]
         public string Naziv { get; set; }
-
-        [Required]
-        [MaxLength(100)]
-        [Column("Ulica")]
-        public string Ulica { get; set; }
     }
 }

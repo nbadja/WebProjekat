@@ -10,7 +10,7 @@ using Models;
 namespace Cenovnik.Migrations
 {
     [DbContext(typeof(ProdavnicaContext))]
-    [Migration("20220120155501_V2")]
+    [Migration("20220122213950_V2")]
     partial class V2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace Cenovnik.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Models.Lokacija", b =>
+            modelBuilder.Entity("Models.Drzava", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -32,18 +32,29 @@ namespace Cenovnik.Migrations
                     b.Property<string>("Naziv")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Mesto");
-
-                    b.Property<string>("Ulica")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Ulica");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Lokacija");
+                    b.ToTable("Drzava");
+                });
+
+            modelBuilder.Entity("Models.Grad", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Naziv")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Grad");
                 });
 
             modelBuilder.Entity("Models.Predmet", b =>
@@ -51,24 +62,20 @@ namespace Cenovnik.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("BarCode")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Barcode");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Cena")
-                        .HasColumnType("int")
-                        .HasColumnName("Cena");
+                        .HasColumnType("int");
 
                     b.Property<string>("Naziv")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Naziv");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("ID");
 
@@ -80,26 +87,28 @@ namespace Cenovnik.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("MestoID")
+                    b.Property<string>("Adresa")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DrzavaID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GradID")
                         .HasColumnType("int");
 
                     b.Property<string>("Naziv")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Naziv");
-
-                    b.Property<int?>("StorageID")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("MestoID");
+                    b.HasIndex("DrzavaID");
 
-                    b.HasIndex("StorageID");
+                    b.HasIndex("GradID");
 
                     b.ToTable("Prodavnica");
                 });
@@ -109,32 +118,36 @@ namespace Cenovnik.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("PredmetID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProdavnicaID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("PredmetID");
 
+                    b.HasIndex("ProdavnicaID");
+
                     b.ToTable("Storage");
                 });
 
             modelBuilder.Entity("Models.Prodavnica", b =>
                 {
-                    b.HasOne("Models.Lokacija", "Mesto")
+                    b.HasOne("Models.Drzava", "Drzava")
                         .WithMany()
-                        .HasForeignKey("MestoID");
+                        .HasForeignKey("DrzavaID");
 
-                    b.HasOne("Models.Storage", "Storage")
+                    b.HasOne("Models.Grad", "Grad")
                         .WithMany()
-                        .HasForeignKey("StorageID");
+                        .HasForeignKey("GradID");
 
-                    b.Navigation("Mesto");
+                    b.Navigation("Drzava");
 
-                    b.Navigation("Storage");
+                    b.Navigation("Grad");
                 });
 
             modelBuilder.Entity("Models.Storage", b =>
@@ -145,10 +158,23 @@ namespace Cenovnik.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Models.Prodavnica", "Prodavnica")
+                        .WithMany("Storages")
+                        .HasForeignKey("ProdavnicaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Predmet");
+
+                    b.Navigation("Prodavnica");
                 });
 
             modelBuilder.Entity("Models.Predmet", b =>
+                {
+                    b.Navigation("Storages");
+                });
+
+            modelBuilder.Entity("Models.Prodavnica", b =>
                 {
                     b.Navigation("Storages");
                 });

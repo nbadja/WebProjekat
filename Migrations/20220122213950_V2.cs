@@ -2,32 +2,32 @@
 
 namespace Cenovnik.Migrations
 {
-    public partial class V5 : Migration
+    public partial class V2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "ID",
-                table: "Storage",
-                newName: "StorageID");
+                name: "Grad",
+                table: "Grad",
+                newName: "Naziv");
 
             migrationBuilder.RenameColumn(
-                name: "ID",
-                table: "Predmet",
-                newName: "PredmetID");
+                name: "Drzava",
+                table: "Drzava",
+                newName: "Naziv");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "StorageID",
-                table: "Storage",
-                newName: "ID");
+                name: "Naziv",
+                table: "Grad",
+                newName: "Grad");
 
             migrationBuilder.RenameColumn(
-                name: "PredmetID",
-                table: "Predmet",
-                newName: "ID");
+                name: "Naziv",
+                table: "Drzava",
+                newName: "Drzava");
         }
     }
 }

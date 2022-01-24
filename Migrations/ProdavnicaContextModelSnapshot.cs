@@ -19,7 +19,7 @@ namespace Cenovnik.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Models.Lokacija", b =>
+            modelBuilder.Entity("Models.Drzava", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -30,18 +30,34 @@ namespace Cenovnik.Migrations
                     b.Property<string>("Naziv")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Mesto");
-
-                    b.Property<string>("Ulica")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Ulica");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Lokacija");
+                    b.ToTable("Drzava");
+                });
+
+            modelBuilder.Entity("Models.Grad", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("DrzavaID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Naziv")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("DrzavaID");
+
+                    b.ToTable("Grad");
                 });
 
             modelBuilder.Entity("Models.Predmet", b =>
@@ -76,7 +92,14 @@ namespace Cenovnik.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("MestoID")
+                    b.Property<string>("Adresa")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DrzavaID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GradID")
                         .HasColumnType("int");
 
                     b.Property<string>("Naziv")
@@ -86,7 +109,9 @@ namespace Cenovnik.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("MestoID");
+                    b.HasIndex("DrzavaID");
+
+                    b.HasIndex("GradID");
 
                     b.ToTable("Prodavnica");
                 });
@@ -113,13 +138,28 @@ namespace Cenovnik.Migrations
                     b.ToTable("Storage");
                 });
 
+            modelBuilder.Entity("Models.Grad", b =>
+                {
+                    b.HasOne("Models.Drzava", "Drzava")
+                        .WithMany()
+                        .HasForeignKey("DrzavaID");
+
+                    b.Navigation("Drzava");
+                });
+
             modelBuilder.Entity("Models.Prodavnica", b =>
                 {
-                    b.HasOne("Models.Lokacija", "Mesto")
+                    b.HasOne("Models.Drzava", "Drzava")
                         .WithMany()
-                        .HasForeignKey("MestoID");
+                        .HasForeignKey("DrzavaID");
 
-                    b.Navigation("Mesto");
+                    b.HasOne("Models.Grad", "Grad")
+                        .WithMany()
+                        .HasForeignKey("GradID");
+
+                    b.Navigation("Drzava");
+
+                    b.Navigation("Grad");
                 });
 
             modelBuilder.Entity("Models.Storage", b =>

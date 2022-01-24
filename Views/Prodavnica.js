@@ -1,25 +1,108 @@
-import {Lokacija} from "./Lokacija.js"
 import {Predmet} from "./Predmet.js"
 
 let instanca = 0;
 var listaPredmeta = [];
 
+export function resetInstance()
+{
+    instanca = 0;
+}
+
 export class Prodavnica
 {
-    constructor(Naziv, Mesto, Ulica)
+    constructor(ID, Naziv, Drzava, DrzavaID, Grad, Adresa)
     {
+        this.ID = ID;
         this.Naziv = Naziv;
-        this.Mesto = Mesto;
-        this.Ulica = Ulica;
+        this.Drzava = Drzava;
+        this.DrzavaID = DrzavaID;
+        this.Grad = Grad;
+        this.Adresa = Adresa;
     }
 
     popuniTabelu(host)
     {
-        var tr = document.createElement("tr");
+        var tr = document.createElement("div");
+        tr.classList.add("row", "justify-content-center", "prodavnicaRed");
         host.appendChild(tr);
 
-        var td = document.createElement("td");
-        td.className = "imgContainer";
+
+        var menuBtn = document.createElement("button");
+        menuBtn.classList.add("menuBtn", "col-1", "h-10", "btn" ,"btn-secondary", "dropdown-toggle");
+        menuBtn.innerHTML = "≡";
+
+        var buttonControls = document.createElement("div");
+        buttonControls.classList.add("btnControls","col-2", "dropdown-menu");
+
+        var viewBtn = document.createElement("button");
+        viewBtn.innerHTML = "View";
+        viewBtn.classList.add("dropdown-item");
+        let naziv = this.Naziv;
+        var id = this.ID;
+        viewBtn.onclick = function()
+        {
+            preuzmiPredmete(id);
+        };
+
+        var editBtn = document.createElement("button");
+        editBtn.innerHTML = "Edit";
+        editBtn.classList.add("dropdown-item");
+        var adresaText = this.Adresa;
+        var drzavaID = this.DrzavaID;
+        editBtn.onclick = function()
+        {
+            $(".modal").show();
+
+            $(".modelTabela").get(0).innerHTML = "";
+
+            var div = document.createElement("div");
+            div.classList.add("row", "prodavnicaRed", "justify-content-center");
+
+            var name = document.createElement("input");
+            name.value = naziv;
+            name.classList.add("row");
+
+            var adresa = document.createElement("input");
+            adresa.value = adresaText;
+            adresa.classList.add("row");
+
+            var btnUpdejt = document.createElement("button");
+            btnUpdejt.innerHTML = "Apply";
+            btnUpdejt.classList.add("row", "btn", "btn-primary");
+            btnUpdejt.onclick = function()
+            {
+                updateProdavnicu(id, name.value, adresa.value, host, drzavaID);
+            };
+
+            div.appendChild(name);
+            div.appendChild(adresa);
+            div.appendChild(btnUpdejt);
+
+            $(".modelTabela").get(0).appendChild(div);
+        };
+
+        var deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = "Delete";
+        deleteBtn.classList.add("dropdown-item");
+        var drzavaID = this.DrzavaID;
+        var prodId = this.ID;
+        deleteBtn.onclick = function()
+        {
+            deleteProdavnica(host, drzavaID, prodId);
+        };
+
+
+
+        buttonControls.appendChild(viewBtn);
+        buttonControls.appendChild(editBtn);
+        buttonControls.appendChild(deleteBtn);
+
+        menuBtn.appendChild(buttonControls);
+        tr.appendChild(menuBtn);
+
+
+        var td = document.createElement("div");
+        td.classList.add("imgContainer", "col-sm", "h-10");
 
         var text = document.createElement("span");
         text.style.fontSize = '40';
@@ -28,409 +111,223 @@ export class Prodavnica
 
         let img = document.createElement("img");
         img.src = "assets/prodavnica.png";
-        img.style.height = '50px';
-        img.style.width = '50px';
         img.className = "prodavnicaImg";
 
         td.appendChild(text);
         td.appendChild(img);
         tr.appendChild(td);
 
-
-        var text = document.createElement("td");
+        var text = document.createElement("div");
         text.innerHTML= this.Naziv;
+        text.classList.add("col", "h-10");
         tr.appendChild(text);
 
-        var text = document.createElement("td");
-        text.innerHTML= this.Mesto;
+        var text = document.createElement("div");
+        text.innerHTML= this.Drzava;
+        text.classList.add("col",  "h-10");
         tr.appendChild(text);
 
-        var text = document.createElement("td");
-        text.innerHTML= this.Ulica;
+        var text = document.createElement("div");
+        text.innerHTML= this.Grad;
+        text.classList.add("col", "h-10");
         tr.appendChild(text);
 
+        var text = document.createElement("div");
+        text.innerHTML= this.Adresa;
+        text.classList.add("col", "h-10");
+        tr.appendChild(text);
 
-        var buttonControls = document.createElement("td");
-        buttonControls.className = "btnControls";
-
-
-        var inputField = document.createElement("input");
-        inputField.style.display = "none";
-        inputField.style.paddingRight = '20px';
-        inputField.placeholder = "Novi Naziv";
-        buttonControls.appendChild(inputField);
-
-        var buttonApply = document.createElement("button");
-        buttonApply.style.display = "none";
-        buttonApply.innerHTML = "Apply";
-        buttonApply.onclick = function()
-        {
-            inputField.style.display = "none";
-            buttonApply.style.display = "none";
-            if(inputField.value != "")
-                updateProdavnicu(naziv, inputField.value);
-        };
-        buttonControls.appendChild(buttonApply);
-
-
-        var viewBtn = document.createElement("button");
-        viewBtn.innerHTML = "View";
-        let naziv = this.Naziv;
-        viewBtn.onclick = function()
-        {
-            preuzmiPredmete(naziv);
-        };
-
-        var editBtn = document.createElement("button");
-        editBtn.innerHTML = "Edit";
-        editBtn.onclick = function()
-        {
-            inputField.style.display = "";
-            buttonApply.style.display = "";
-        };
-
-        var deleteBtn = document.createElement("button");
-        deleteBtn.innerHTML = "Delete";
-        deleteBtn.onclick = function()
-        {
-            deleteProdavnica(naziv);
-        };
-
-        buttonControls.appendChild(viewBtn);
-        buttonControls.appendChild(editBtn);
-        buttonControls.appendChild(deleteBtn);
-
-        tr.appendChild(buttonControls);
-
-        tr.className = "polje_"+instanca;
+        tr.classList.add("polje_"+instanca, "mojRed");
         instanca++;
     }
 }
 
 
-
-function preuzmiPredmete(naziv)
+function preuzmiPredmete(id)
 {
-        console.log("https://localhost:5001/Storage/PreuzmiStorage/" + naziv);
+        console.log("https://localhost:5001/Storage/PreuzmiStorage/" + id);
 
-        var modal = document.getElementById("myModal");
-        modal.style.display = "block";
+        $(".modal").show();
 
-        fetch("https://localhost:5001/Storage/PreuzmiStorage/" + naziv,
+        fetch("https://localhost:5001/Storage/PreuzmiStorage/" + id,
          {method : 'GET'}
         )
         .then(p => {
             p.json().then(storage => {
                 let index = 0;
-                var modal = document.getElementById("modelTabela");
-                modal.innerHTML = '';
-                var tr = document.createElement("tr");
+                $(".modelTabela").get(0).innerHTML = '';
 
-                var th = document.createElement("th");
-                th.innerHTML = "Index";
-                tr.appendChild(th);
+                var div = document.createElement("div");
+                div.classList.add("row");
 
-                var th = document.createElement("th");
-                th.innerHTML = "Naziv";
-                tr.appendChild(th);
 
-                var th = document.createElement("th");
-                th.innerHTML = "BarCode";
-                tr.appendChild(th);
+                var containerPredmet = document.createElement("div");
+                containerPredmet.classList.add("grad-select","col-10", "col-xs-12");
 
-                var th = document.createElement("th");
-                th.innerHTML = "Cena";
-                tr.appendChild(th);
+                var selectPredmet = document.createElement("select");
+                selectPredmet.classList.add("predmetDropdown",  "h-100", "w-100");
+                containerPredmet.appendChild(selectPredmet);
 
-                modal.appendChild(tr);
+                fetch("https://localhost:5001/Predmet/PreuzmiPredmet",
+                {method : 'GET'}
+                )
+               .then(p => {
+                   p.json().then(predmet => {
+                        predmet.forEach(info => {
+                            var option = document.createElement('option');
+                            option.text = info.naziv + "    Barcode: " + info.barCode + "   Cena:" + info.cena;
+                            option.value = info.id;
+                            selectPredmet.add(option);
+                        })
+                    })
+                }
+                );
+                div.appendChild(containerPredmet);
 
-                var tr = document.createElement("tr");
-
-                tr.appendChild(document.createElement("th"));
-
-                var th = document.createElement("th");
-                var input = document.createElement("input");
-                input.id = "nazivPredmetaField";
-                input.placeholder = "Naziv";
-                th.appendChild(input);
-                tr.appendChild(th);
-
-                var th = document.createElement("th");
-                var input = document.createElement("input");
-                input.id = "barField";
-                input.placeholder = "BarCode";
-                th.appendChild(input);
-                tr.appendChild(th);
-
-                var th = document.createElement("th");
-                var input = document.createElement("input");
-                input.id = "cenaField";
-                input.placeholder = "Cena";
-                th.appendChild(input);
-                tr.appendChild(th);
-
+                var btnDiv = document.createElement("div");
+                btnDiv.classList.add("col");
                 var th = document.createElement("button");
-                th.className = "btnControls";
+                th.classList.add("w-100");
                 th.innerHTML = "Add";
-
                 th.onclick = function()
                 {
-                    let predmet = document.getElementById("nazivPredmetaField").value;
-                    let bar = document.getElementById("barField").value;
-                    let cena = document.getElementById("cenaField").value;
-                    dodajPredmet(naziv, predmet, bar, cena);
+                    dodajPredmet(id);
                 };
-                tr.appendChild(th);
+                btnDiv.appendChild(th);
+                div.appendChild(btnDiv);
 
-                modal.appendChild(tr);
-
-
+                $(".modelTabela").get(0).appendChild(div);
 
                 storage.forEach(predmet => {
                     index++;
-                    var p  = new Predmet(predmet.predmet.naziv, predmet.predmet.barCode, predmet.predmet.cena);
+                    var p  = new Predmet(predmet.predmet.id, predmet.predmet.naziv, predmet.predmet.barCode, predmet.predmet.cena);
                     listaPredmeta.push(p);
-                    var tr = document.createElement("tr");
+                    var tr = document.createElement("div");
+                    tr.classList.add("row",  "justify-content-center", "prodavnicaRed", "polje");
 
-                    var text = document.createElement("td");
+                    var text = document.createElement("div");
+                    text.classList.add("col");
                     text.innerHTML= index;
                     tr.appendChild(text);
 
-                    var text = document.createElement("td");
+                    var text = document.createElement("div");
+                    text.classList.add("col");
                     text.innerHTML= predmet.predmet.naziv;
                     tr.appendChild(text);
 
-                    var text = document.createElement("td");
+                    var text = document.createElement("div");
+                    text.classList.add("col");
                     text.innerHTML= predmet.predmet.barCode;
                     tr.appendChild(text);
 
-                    var text = document.createElement("td");
+                    var text = document.createElement("div");
+                    text.classList.add("col");
                     text.innerHTML= predmet.predmet.cena;
                     tr.appendChild(text);
 
-                    var buttonControls = document.createElement("td");
-                    buttonControls.className = "btnControls";
-
-                    var barcode = document.createElement("input");
-                    barcode.style.display = "none";
-                    barcode.placeholder = "Barcode";
-                    buttonControls.appendChild(barcode);
-
-                    var cena = document.createElement("input");
-                    cena.style.display = "none";
-                    cena.style.paddingRight = '20px';
-                    cena.placeholder = "Cena";
-                    buttonControls.appendChild(cena);
-
-                    var buttonApply = document.createElement("button");
-                    buttonApply.style.display = "none";
-                    buttonApply.innerHTML = "Apply";
-                    buttonApply.onclick = function()
-                    {
-                        cena.style.display = "none";
-                        barcode.style.display = "none";
-                        buttonApply.style.display = "none";
-                        if(cena.value != "" && barcode.value != "")
-                            updatePredmet(naziv, predmet.predmet.naziv, barcode.value, cena.value);
-                    };
-                    buttonControls.appendChild(buttonApply);
-
-
-                    var editBtn = document.createElement("button");
-                    editBtn.innerHTML = "Edit";
-                    editBtn.onclick = function()
-                    {
-                            cena.style.display = "";
-                            barcode.style.display = "";
-                            buttonApply.style.display = "";
-                    };
+                    var buttonControls = document.createElement("div");
+                    buttonControls.classList.add("col");
 
                     var deleteBtn = document.createElement("button");
+                    deleteBtn.classList.add("btn", "btn-primary", "w-100");
                     deleteBtn.innerHTML = "Delete";
                     deleteBtn.onclick = function()
                     {
-                        deletePredmeti(naziv,  predmet.predmet.naziv);
+                        deletePredmeti(id, predmet.predmet.id);
                     };
 
-
-                    buttonControls.appendChild(editBtn);
                     buttonControls.appendChild(deleteBtn);
 
                     tr.appendChild(buttonControls);
 
-                    modal.appendChild(tr);
+                    $(".modelTabela").get(0).appendChild(tr);
                 });
             })
         });
 }
 
 
-
-function dodajHeaderUTabelu(div)
+function deletePredmeti(prodavnicaID, predmetID)
 {
-    var tr = document.createElement("tr");
-
-    var th = document.createElement("th");
-    th.innerHTML = "Index";
-    tr.appendChild(th);
-
-    var th = document.createElement("th");
-    th.innerHTML = "Naziv";
-    tr.appendChild(th);
-
-    var th = document.createElement("th");
-    th.innerHTML = "Grad";
-    tr.appendChild(th);
-
-    var th = document.createElement("th");
-    th.innerHTML = "Ulica";
-    tr.appendChild(th);
-
-    div.appendChild(tr);
-
-    var tr = document.createElement("tr");
-
-    tr.appendChild(document.createElement("th"));
-
-    var th = document.createElement("th");
-    var input = document.createElement("input");
-    input.id = "nazivField";
-    input.placeholder = "Naziv";
-    th.appendChild(input);
-    tr.appendChild(th);
-
-    var th = document.createElement("th");
-    var input = document.createElement("input");
-    input.id = "gradField";
-    input.placeholder = "Grad";
-    th.appendChild(input);
-    tr.appendChild(th);
-
-    var th = document.createElement("th");
-    var input = document.createElement("input");
-    input.id = "ulicaField";
-    input.placeholder = "Ulica";
-    th.appendChild(input);
-    tr.appendChild(th);
-
-    var th = document.createElement("button");
-    th.className = "btnControls";
-    th.innerHTML = "Add";
-
-    th.onclick = function()
-    {
-        let naziv = document.getElementById("nazivField").value;
-        let mesto = document.getElementById("gradField").value;
-        let ulica = document.getElementById("ulicaField").value;
-        dodajProdavnicu(naziv, mesto, ulica);
-    };
-    tr.appendChild(th);
-
-    div.appendChild(tr);
-}
-
-
-function deletePredmeti(Naziv, Predmet)
-{
-    console.log("https://localhost:5001/Storage/DeleteStorage/" + Naziv + "/" + Predmet);
-    fetch("https://localhost:5001/Storage/DeleteStorage/" + Naziv + "/" + Predmet,
+    console.log("https://localhost:5001/Storage/DeleteStorage/" + prodavnicaID + "/" + predmetID);
+    fetch("https://localhost:5001/Storage/DeleteStorage/" + prodavnicaID + "/" + predmetID,
     {method : 'DELETE'}
     )
    .then(p => {
-        preuzmiPredmete(Naziv);
+        preuzmiPredmete(prodavnicaID);
     });
 }
 
 
-export function preuzmiProdavnice()
+export function preuzmiProdavnice(div, id)
 {
-    fetch("https://localhost:5001/Prodavnica/PreuzmiProdavnice",
+    fetch("https://localhost:5001/Prodavnica/PreuzmiProdavniceDrzava/" + id,
     {method : 'GET'}
     )
     .then(p => {
         p.json().then(prodavnica => {
-            var div = document.getElementById("mojaTabela");
             div.innerHTML = "";
-
-            dodajHeaderUTabelu(div);
-
             prodavnica.forEach(prod => {
-                var p  = new Prodavnica(prod.naziv, prod.mesto.naziv, prod.mesto.ulica);
+                var p  = new Prodavnica(prod.id, prod.naziv, prod.drzava.naziv, prod.drzava.id, prod.grad.naziv, prod.adresa);
                 p.popuniTabelu(div);
+                console.log("PROD");
             });
-            document.body.appendChild(div);
             console.log(p);
         })
     })
 }
 
-function deleteProdavnica(Naziv)
+
+function deleteProdavnica(div, drzava, ID)
 {
-    console.log("https://localhost:5001/Prodavnica/DeleteProdavnica/" + Naziv);
-    fetch("https://localhost:5001/Prodavnica/DeleteProdavnica/" + Naziv,
+    console.log("https://localhost:5001/Prodavnica/DeleteProdavnica/" + ID);
+    fetch("https://localhost:5001/Prodavnica/DeleteProdavnica/" + ID,
     {method : 'DELETE'}
     )
    .then(p => {
-        fetch("https://localhost:5001/Storage/DeleteAllFromStorage/" + Naziv,
+        fetch("https://localhost:5001/Storage/DeleteAllFromStorage/" + ID,
         {method : 'DELETE'}
         )
         .then(p => {
-                preuzmiProdavnice();
+                preuzmiProdavnice(div, drzava);
             });
     });
     instanca = 0;
 }
 
 
-export function dodajProdavnicu(Naziv, Mesto, Ulica)
+export function dodajProdavnicu(div, Naziv, Drzava, Grad, Adresa)
 {
-    console.log("https://localhost:5001/Prodavnica/DodajProdavnicu/" + Naziv + "/" + Mesto + "/" + Ulica);
-    fetch("https://localhost:5001/Prodavnica/DodajProdavnicu/" +  Naziv + "/" + Mesto + "/" + Ulica,
+    console.log("https://localhost:5001/Prodavnica/DodajProdavnicu/" + Naziv + "/" + Drzava + "/" + Grad + "/" + Adresa);
+    fetch("https://localhost:5001/Prodavnica/DodajProdavnicu/" +  Naziv + "/" + Drzava + "/" + Grad + "/" + Adresa,
     {method : 'POST'}
     )
    .then(p => {
         instanca = 0;
-        preuzmiProdavnice();
+        preuzmiProdavnice(div, Drzava);
     });
 }
 
 
-export function updateProdavnicu(Naziv,Novi)
+export function updateProdavnicu(ProdavnicaID, Naziv, Adresa, div, DrzavaID)
 {
-    console.log("https://localhost:5001/Prodavnica/UpdateProdavnica/" + Naziv + "/" + Novi + "/");
-    fetch("https://localhost:5001/Prodavnica/UpdateProdavnica/" +  Naziv + "/" + Novi + "/",
+    console.log("https://localhost:5001/Prodavnica/UpdateProdavnica/" + ProdavnicaID + "/" + Naziv + "/" + Adresa + "/");
+    fetch("https://localhost:5001/Prodavnica/UpdateProdavnica/" + ProdavnicaID + "/" + Naziv + "/" + Adresa + "/",
     {method : 'PUT'}
     )
    .then(p => {
         instanca = 0;
-        preuzmiProdavnice();
-    });
-}
-
-export function updatePredmet(prodavnica, naziv, barcode ,value)
-{
-    console.log("https://localhost:5001/Predmet/UpdatePredmet/" + naziv + "/" + barcode + "/" + value);
-    fetch("https://localhost:5001/Predmet/UpdatePredmet/" +  naziv + "/" + barcode + "/" + value,
-    {method : 'PUT'}
-    )
-   .then(p => {
-        preuzmiPredmete(prodavnica);
+        preuzmiProdavnice(div, DrzavaID);
     });
 }
 
 
-export function dodajPredmet(Prodavnica, Naziv, BarCode, Cena)
+export function dodajPredmet(ProdavnicaID)
 {
-    console.log("https://localhost:5001/Predmet/DodajPredmet/" + Naziv + "/" + BarCode + "/" + Cena);
-    fetch("https://localhost:5001/Predmet/DodajPredmet/" +   Naziv + "/" + BarCode + "/" + Cena,
+    fetch("https://localhost:5001/Storage/DodajStoregu/" + ProdavnicaID + "/" + $(".predmetDropdown option:selected").val(),
     {method : 'POST'}
-    )
-   .then(p => {
-        fetch("https://localhost:5001/Storage/DodajStoregu/" + Prodavnica + "/" + Naziv,
-        {method : 'POST'}
-        ).then(p => {
-            preuzmiPredmete(Prodavnica);
-        })
+    ).then(p => {
+        preuzmiPredmete(ProdavnicaID);
     });
 }
 
@@ -439,7 +336,6 @@ export function dodajModel()
 {
     var model = document.createElement("div");
     model.className = "modal";
-    model.id = "myModal";
 
     var content = document.createElement("div");
     content.className = "modal-content";
@@ -452,9 +348,8 @@ export function dodajModel()
         model.style.display = "none";
     }
 
-    var div = document.createElement("table");
-    div.classList.add("flex", "tableContent",);
-    div.id = "modelTabela";
+    var div = document.createElement("div");
+    div.classList.add("container", "tableContent", "modelTabela");
 
     content.appendChild(close);
     content.appendChild(div);
