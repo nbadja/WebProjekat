@@ -171,15 +171,24 @@ function preuzmiPredmete(div)
     {method : 'GET'}
     )
     .then(p => {
-        p.json().then(prodavnica => {
-            div.innerHTML = "";
-            prodavnica.forEach(prod => {
-                var p  = new Predmet(prod.id, prod.naziv, prod.barCode, prod.cena);
-                p.popuniTabelu(div);
-                console.log("Predmet");
+        if(p.ok)
+        {
+            p.json().then(prodavnica => {
+                div.innerHTML = "";
+                prodavnica.forEach(prod => {
+                    var p  = new Predmet(prod.id, prod.naziv, prod.barCode, prod.cena);
+                    p.popuniTabelu(div);
+                    console.log("Predmet");
+                });
+                console.log(p);
+            })
+        }
+        else
+        {
+                var txt = p.text().then(message => {
+                alert(message);
             });
-            console.log(p);
-        })
+        }
     })
 }
 
